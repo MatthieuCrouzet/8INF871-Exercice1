@@ -58,17 +58,18 @@ define([
     }
 	
 	findObjectInObject(objectName){
-		for(var i = 0; i < this.children.length; i++){
-			var child = this.children[i];
-			if(child.name == objectName){
-				return child;
-			} else if (this.children.length > 0){
-				//TODO 	
-			}
-		}
-		return null;
-	}
-	
+      if (this.children[objectName]) {
+        return this.getChild(objectName);
+      }
+      let found = null;
+      Object.keys(this.children).forEach((k) => {
+        if (found) {
+          return;
+        }
+        found = this.children[k].findObjectInObject(objectName);
+      });
+      return found;
+    }
 
     // ## Méthode *display*
     // Cette méthode appelle la méthode *display* des composants
