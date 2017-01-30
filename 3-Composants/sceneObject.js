@@ -16,6 +16,10 @@ define([
       const newComponent = ComponentFactory.create(type, this);
 	  this.components.push(newComponent);
     }
+	
+	constructor(name){
+		this.name = name;
+	}
 
     // ## Fonction *getComponent*
     // Cette fonction retourne un composant existant du type spécifié
@@ -97,8 +101,8 @@ define([
   }
 
   class PlayerObject extends SceneObject{
-	  constructor(name,descr, owner){	
-		  this.name = name;
+	  constructor(name,descr, owner){		  
+		  super(name);
 		  this.owner = owner;
 		  var pos = ComponentFactory.create(Position, this);
 		  pos.setup(descr["components"]["Position"]);
@@ -119,7 +123,7 @@ define([
   
   class BackgroundObject extends SceneObject{
 	  constructor(name,descr, owner){
-		  this.name = name;
+		  super(name);
 		  this.owner = owner;
 		  var pos = ComponentFactory.create(Position, this);
 		  pos.setup(descr["components"]["Position"]);
@@ -132,7 +136,7 @@ define([
   
   class RefereeObject extends SceneObject{
 	  constructor(name,descr, owner){
-		this.name = name;
+			  super(name);
 		this.owner = owner;
 		var referee = ComponentFactory.create(Referee, this);
 		referee.setup(descr["components"]["Referee"]);
@@ -142,7 +146,7 @@ define([
   
   class BallObject extends SceneObject{
 	  constructor(name,descr, owner){
-		  this.name = name;
+		  super(name);
 		  this.owner = owner;
 		  var pos = ComponentFactory.create(Position, this);
 		  pos.setup(descr["components"]["Position"]);
@@ -161,7 +165,7 @@ define([
   
   class ScoreObject extends SceneObject{
 	  constructor(name,descr, owner){
-		  this.name = name;
+		  super(name);
 		  this.owner = owner;
 		  var scorePos = ComponentFactory.create(Position, this);
 		  scorePos.setup(descr["components"]["Position"]);
