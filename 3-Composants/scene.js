@@ -1,7 +1,7 @@
 define([
   'sceneObject',
 ], (
-  SceneObject
+  SceneObjectFactory
 ) => {
   'use strict';
 
@@ -24,14 +24,22 @@ define([
     // Cette méthode appelle les méthodes *display* de tous les
     // objets de la scène.
     display(dT) {
-      throw new Error('Not implemented');
+	  this.background.display(dT);
+	  this.ball.display(dT);
+	  this.player1.display(dT);
+	  this.player2.display(dT);
+	  this.referee.display(dT);
     }
 
     // ## Méthode *update*
     // Cette méthode appelle les méthodes *update* de tous les
     // objets de la scène.
     update(dT) {
-      throw new Error('Not implemented');
+	  this.background.update(dT);
+	  this.ball.update(dT);
+	  this.player1.update(dT);
+	  this.player2.update(dT);
+	  this.referee.update(dT);
     }
 
     // ## Fonction *findObject*
@@ -55,12 +63,13 @@ define([
 		});
     }
 	
-	constructor(descr){
-		this.background = new Background("background", descr["background"]);
-		this.ball = new Ball("ball", descr["ball"]);
-		this.player1 = new Player("player1", descr["player1"]);
-		this.player2 = new Player("player2", descr["player2"]);
-		this.referee = new Referee("referee", descr["referee"]);
+	constructor(descr){	
+		this.name = "scene";
+		this.background = SceneObjectFactory.create("Background", "background", descr["background"], this);
+		this.ball = SceneObjectFactory.create("Ball", "ball", descr["ball"],this);
+		this.player1 = SceneObjectFactory.create("Player", "player1", descr["player1"], this);
+		this.player2 = SceneObjectFactory.create("Player", "player2", descr["player2"], this);
+		this.referee = SceneObjectFactory.create("Referee", "referee", descr["referee"], this);
 	}
 	
 	

@@ -50,7 +50,7 @@ define([
     // avec l'objet courant. Voir la méthode `findObject` de la
     // classe *Scene*.
     findObjectInScene(objectName) {
-		var current = this;
+	  var current = this;
 	  while(current.name != "scene"){
 		  current = current.owner;
 	  }
@@ -61,32 +61,42 @@ define([
       if (this.children[objectName]) {
         return this.getChild(objectName);
       }
-      let found = null;
-      Object.keys(this.children).forEach((k) => {
-        if (found) {
+      var object = null;
+      this.children.forEach((key, value) => {
+        if (object) {
           return;
         }
-        found = this.children[k].findObjectInObject(objectName);
+        object = value.findObjectInObject(objectName);
       });
-      return found;
+      return object;
     }
 
     // ## Méthode *display*
     // Cette méthode appelle la méthode *display* des composants
     // de l'objet.
     display(dT) {
-      throw new Error('Not implemented');
+      this.children.forEach((key, value) => {
+        value.display(dT);
+      });
+	  this.components.forEach((key, value) => {
+        value.display(dT);
+      });
     }
 
     // ## Méthode *update*
     // Cette méthode appelle la méthode *update* des composants
     // de l'objet.
     update(dT) {
-      throw new Error('Not implemented');
+      this.children.forEach((key, value) => {
+        value.update(dT);
+      });
+	  this.components.forEach((key, value) => {
+        value.update(dT);
+      });
     }
   }
 
-  class Player extends SceneObject{
+  class PlayerObject extends SceneObject{
 	  constructor(name,descr, owner){	
 		  this.name = name;
 		  this.owner = owner;
@@ -107,7 +117,7 @@ define([
 	  }
   }
   
-  class Background extends SceneObject{
+  class BackgroundObject extends SceneObject{
 	  constructor(name,descr, owner){
 		  this.name = name;
 		  this.owner = owner;
@@ -116,12 +126,11 @@ define([
 		  var texture = ComponentFactory.create(Texture, this);
 		  texture.setup(descr["components"]["Texture"]);
 		  this.addComponent(pos);
-		  this.addComponent(texture);
-		  
-	  };
+		  this.addComponent(texture);		  
+	  }
   }
   
-  class Referee extends SceneObject{
+  class RefereeObject extends SceneObject{
 	  constructor(name,descr, owner){
 		this.name = name;
 		this.owner = owner;
@@ -131,7 +140,7 @@ define([
 	  }
   }
   
-  class Ball extends SceneObject{
+  class BallObject extends SceneObject{
 	  constructor(name,descr, owner){
 		  this.name = name;
 		  this.owner = owner;
@@ -150,7 +159,7 @@ define([
 	  }
   }
   
-  class Score extends SceneObject{
+  class ScoreObject extends SceneObject{
 	  constructor(name,descr, owner){
 		  this.name = name;
 		  this.owner = owner;
@@ -169,6 +178,21 @@ define([
 	  }
   }
   
+  class SceneObjectFactory {
+    static create(type, name, descr, owner) {
+      const comp = new SceneObjectFactory.sceneObjectCreators[type](name, descr,owner);
+      comp.__type = type;
+      return comp;
+    }
+  }
   
-  return sceneObject;
+  SceneObjectFactory.sceneObjectCreators = {
+    Background: BackgroundObject,
+	Ball: BallObject,
+	Player: PlayerObject,
+	Referee: RefereeObject,
+	Score: ScoreObject
+  };
+
+  return SceneObjectFactory;
 });
