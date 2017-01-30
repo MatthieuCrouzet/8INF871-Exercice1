@@ -21,7 +21,8 @@ define([
     // Cette fonction retourne un composant existant du type spécifié
     // associé à l'objet.
     getComponent(type) {
-	  foreach(comp in this.components){
+	  for(var i = 0; i < this.components.length; i++) {
+		  var comp = this.components[i];
 		  if(comp.__type == type){
 			  return comp;
 		  }
@@ -57,7 +58,8 @@ define([
     }
 	
 	findObjectInObject(objectName){
-		foreach(child in children){
+		for(var i = 0; i < this.children.length; i++){
+			var child = this.children[i];
 			if(child.name == objectName){
 				return child;
 			}
