@@ -62,6 +62,8 @@ define([
 			var child = this.children[i];
 			if(child.name == objectName){
 				return child;
+			} else if (this.children.length > 0){
+				//TODO 	
 			}
 		}
 		return null;
