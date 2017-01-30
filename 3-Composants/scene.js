@@ -18,7 +18,6 @@ define([
     // hiérarchie est configurée correctement.
     static create(description) {
       const scene = new Scene(description);
-      throw new Error('Not implemented');
     }
 
     // ## Méthode *display*
@@ -39,8 +38,20 @@ define([
     // La fonction *findObject* retourne l'objet de la scène
     // portant le nom spécifié.
     findObject(objectName) {
+		
       throw new Error('Not implemented');
     }
+	
+	constructor(descr){
+		this.background = new Background("background", descr["background"]);
+		this.ball = new Ball("ball", descr["ball"]);
+		this.player1 = new Player("player1", descr["player1"]);
+		this.player2 = new Player("player2", descr["player2"]);
+		this.referee = new Referee("referee", descr["referee"]);
+	}
+	
+	
+	
   }
 
   return Scene;
