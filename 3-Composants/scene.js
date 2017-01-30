@@ -38,8 +38,22 @@ define([
     // La fonction *findObject* retourne l'objet de la scène
     // portant le nom spécifié.
     findObject(objectName) {
-		
-      throw new Error('Not implemented');
+		var objectList = [];
+		var promises = [];
+		const bg = this.background.findObjectInObject(objectName);
+		const ball = this.ball.findObjectInObject(objectName);
+		const p1 = this.player1.findObjectInObject(objectName);
+		const p2 = this.player2.findObjectInObject(objectName);
+		const ref = this.referee.findObjectInObject(objectName);
+		promises.push(bg, ball, p1, p2, ref);
+		Promise.all(promises).then ((values) => {
+			foreach(val in values){
+				if(val != null){
+					return val;
+				}
+			}
+			return null;
+		});
     }
 	
 	constructor(descr){

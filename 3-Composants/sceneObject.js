@@ -49,8 +49,22 @@ define([
     // avec l'objet courant. Voir la méthode `findObject` de la
     // classe *Scene*.
     findObjectInScene(objectName) {
-      throw new Error('Not implemented');
+		var current = this;
+	  while(current.name != "scene"){
+		  current = current.owner;
+	  }
+	  current.findObject(objectName);
     }
+	
+	findObjectInObject(objectName){
+		foreach(child in children){
+			if(child.name == objectName){
+				return child;
+			}
+		}
+		return null;
+	}
+	
 
     // ## Méthode *display*
     // Cette méthode appelle la méthode *display* des composants
@@ -68,8 +82,9 @@ define([
   }
 
   class Player extends SceneObject{
-	  constructor(name,descr){	
+	  constructor(name,descr, owner){	
 		  this.name = name;
+		  this.owner = owner;
 		  var pos = ComponentFactory.create(Position, this);
 		  pos.setup(descr["components"]["Position"]);
 		  var texture = ComponentFactory.create(Texture, this);
@@ -82,14 +97,15 @@ define([
 		  this.addComponent(texture);
 		  this.addComponent(joystick);
 		  this.addComponent(collider);
-		  var score = new Score(descr["children"]["score"]);
+		  var score = new Score(descr["children"]["score"], this);
 		  this.addChild("score", score);
 	  }
   }
   
   class Background extends SceneObject{
-	  constructor(name,descr){
+	  constructor(name,descr, owner){
 		  this.name = name;
+		  this.owner = owner;
 		  var pos = ComponentFactory.create(Position, this);
 		  pos.setup(descr["components"]["Position"]);
 		  var texture = ComponentFactory.create(Texture, this);
@@ -101,8 +117,9 @@ define([
   }
   
   class Referee extends SceneObject{
-	  constructor(name,descr){
+	  constructor(name,descr, owner){
 		this.name = name;
+		this.owner = owner;
 		var referee = ComponentFactory.create(Referee, this);
 		referee.setup(descr["components"]["Referee"]);
 		this.addComponent(referee);
@@ -110,8 +127,9 @@ define([
   }
   
   class Ball extends SceneObject{
-	  constructor(name,descr){
+	  constructor(name,descr, owner){
 		  this.name = name;
+		  this.owner = owner;
 		  var pos = ComponentFactory.create(Position, this);
 		  pos.setup(descr["components"]["Position"]);
 		  var texture = ComponentFactory.create(Texture, this);
@@ -128,8 +146,9 @@ define([
   }
   
   class Score extends SceneObject{
-	  constructor(name,descr){
+	  constructor(name,descr, owner){
 		  this.name = name;
+		  this.owner = owner;
 		  var scorePos = ComponentFactory.create(Position, this);
 		  scorePos.setup(descr["components"]["Position"]);
 		  var scoreText = ComponentFactory.create(Texture, this);
