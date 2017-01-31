@@ -17,7 +17,10 @@ define([
     // retourne une promesse résolue lorsque l'ensemble de la
     // hiérarchie est configurée correctement.
     static create(description) {
-      const scene = new Scene(description);
+      const scene = new Scene();
+	  scene.setup(description);
+	  console.log(scene);
+	  return scene;
     }
 
     // ## Méthode *display*
@@ -56,44 +59,50 @@ define([
     // La fonction *findObject* retourne l'objet de la scène
     // portant le nom spécifié.
     findObject(objectName) {
-		var promises = [];
+		var values = [];
 		if(this.background){
 			const bg = this.background.findObjectInObject(objectName);
-			promises.push(bg);
-		}
-		if(this.ball){
-			const ball = this.ball.findObjectInObject(objectName);
-			promises.push(ball);
+			values.push(bg);
 		}
 		if(this.player1){
 			const p1 = this.player1.findObjectInObject(objectName);
-			promises.push(p1);
+			values.push(p1);
 		}
 		if(this.player2){
 			const p2 = this.player2.findObjectInObject(objectName);
-			promises.push(p2);
+			values.push(p2);
+		}
+		if(this.ball){
+			const ball = this.ball.findObjectInObject(objectName);
+			values.push(ball);
 		}
 		if(this.referee){
 			const ref = this.referee.findObjectInObject(objectName);
-			promises.push(ref);
+			values.push(ref);
 		}
-		Promise.all(promises).then ((values) => {
-			for(var i = 0; i < values.length; i++){
-				if(values[i] != null){
-					return values[i];
-				}
+		for(var i = 0; i < values.length; i++){
+			if(values[i] != null){
+				return values[i];
 			}
-			return null;
-		});
+		}
+		return null;
     }
 	
-	constructor(descr){	
+	constructor(){	
 		this.name = "scene";
-		this.background = SceneObjectFactory.create("Background", "background", descr["background"], this);
-		this.player1 = SceneObjectFactory.create("Player", "player1", descr["player1"], this);
-		this.player2 = SceneObjectFactory.create("Player", "player2", descr["player2"], this);		
-		this.ball = SceneObjectFactory.create("Ball", "ball", descr["ball"],this);
-		this.referee = SceneObjectFactory.create("Referee", "referee", descr["referee"], this);
+		this.background = SceneObjectFactory.create("Background", "background", this);
+		this.player1 = SceneObjectFactory.create("Player", "player1", this);
+		this.player2 = SceneObjectFactory.create("Player", "player2", this);		
+		this.ball = SceneObjectFactory.create("Ball", "ball",this);
+		this.referee = SceneObjectFactory.create("Referee", "referee", this);
+	}
+	
+	setup(descr){
+		this.background.setup(descr["background"]);
+		this.player1.setup(descr["player1"]);
+		this.player2.setup(descr["player2"]);
+		this.ball.setup(descr["ball"]);
+		this.referee.setup(descr["referee"]);
 	}
 	
 	

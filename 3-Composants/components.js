@@ -268,15 +268,14 @@ define(() => {
       this.collision = null;
       this.inZone = null;
       const area = this.area;
-
       this.obstacles.forEach((obj) => {
-        const otherCollider = obj.getComponent('Collider');
-        if (area.intersectsWith(otherCollider.area)) {
-          this.collision = obj;
-        }
-        if (area.intersectsWith(otherCollider.zone)) {
-          this.inZone = obj;
-        }
+		const otherCollider = obj.getComponent('Collider');
+		if (area.intersectsWith(otherCollider.area)) {
+		  this.collision = obj;
+		}
+		if (area.intersectsWith(otherCollider.zone)) {
+		  this.inZone = obj;
+		}
       });
     }
   }
@@ -373,44 +372,45 @@ define(() => {
     update() {
       // On commence par aller chercher les objets avec lesquel il
       // y a possibilité de collision.
-      const ballCollider = this.ball.getComponent('Collider');
-      const ballCollision = ballCollider.collision;
-      const ballInZone = ballCollider.inZone;
+	  const ballCollider = this.ball.getComponent('Collider');
+	  const ballCollision = ballCollider.collision;
+	  const ballInZone = ballCollider.inZone;
 
-      // Si il y a collision, ça veut dire que le joueur n'a pas
-      // raté son coup. Si on n'est pas dans une zone de collision,
-      // ça veut dire que la balle n'est pas rendu proche d'une palette.
-      // Dans ces deux cas, il n'y a pas eu point. On quitte donc
-      // la méthode.
-      if (ballCollision || !ballInZone) {
-        return;
-      }
+	  // Si il y a collision, ça veut dire que le joueur n'a pas
+	  // raté son coup. Si on n'est pas dans une zone de collision,
+	  // ça veut dire que la balle n'est pas rendu proche d'une palette.
+	  // Dans ces deux cas, il n'y a pas eu point. On quitte donc
+	  // la méthode.
+	  if (ballCollision || !ballInZone) {
+		return;
+	  }
+	  
+	  // On vérifie pour chaque joueur lequel a raté la balle.
+	  this.players.forEach((player) => {
+		// Si ce joueur n'est pas dans la zone de la balle, ça veut
+		// dire qu'il marque un point (ie.: c'est son adversaire qui
+		// a raté)
+		if (player !== ballInZone) {
+		  const scoreObject = player.getChild('score');
+		  const scoreComp = scoreObject.getComponent('Score');
+		  scoreComp.points++;
 
-      // On vérifie pour chaque joueur lequel a raté la balle.
-      this.players.forEach((player) => {
-        // Si ce joueur n'est pas dans la zone de la balle, ça veut
-        // dire qu'il marque un point (ie.: c'est son adversaire qui
-        // a raté)
-        if (player !== ballInZone) {
-          const scoreObject = player.getChild('score');
-          const scoreComp = scoreObject.getComponent('Score');
-          scoreComp.points++;
+		  // On termine au 10e point en affichant un message et en
+		  // réinitialisant les scores.
+		  if (scoreComp.points > 9) {
+			alert('Partie terminée');
+			this.players.forEach((p) => {
+			  p.getChild('score').getComponent('Score').points = 0;
+			});
+		  }
+		}
 
-          // On termine au 10e point en affichant un message et en
-          // réinitialisant les scores.
-          if (scoreComp.points > 9) {
-            alert('Partie terminée');
-            this.players.forEach((p) => {
-              p.getChild('score').getComponent('Score').points = 0;
-            });
-          }
-        }
-
-        // Quand il y a point, on remet la balle en jeu à sa position
-        // et vélocité initiale.
-        this.ball.getComponent('Position').reset();
-        this.ball.getComponent('Motion').reset();
-      });
+		// Quand il y a point, on remet la balle en jeu à sa position
+		// et vélocité initiale.
+		this.ball.getComponent('Position').reset();
+		this.ball.getComponent('Motion').reset();
+	});
+  
     }
   }
 

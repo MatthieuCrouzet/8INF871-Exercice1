@@ -41,14 +41,23 @@ define([
     // La méthode *addChild* ajoute à l'objet courant un objet
     // enfant.
     addChild(objectName, child) {
-      this.children.push(objectName => child);
+		child.name = objectName;
+      this.children.push(child);
     }
 
     // ## Fonction *getChild*
     // La fonction *getChild* retourne un objet existant portant le
     // nom spécifié, dont l'objet courant est le parent.
     getChild(objectName) {      
-	  return this.children[objectName];
+	  var child = null;
+      this.children.forEach((key, value) => {
+        if (child) {
+          return;
+        }
+		if(this.children[value].name == objectName)
+			child = this.children[value];
+      });
+      return child;
     }
 
     // ## Fonction *fingObjectInScene*
@@ -61,11 +70,13 @@ define([
 	  while(current.name != "scene"){
 		  current = current.owner;
 	  }
-	  current.findObject(objectName);
+	  return current.findObject(objectName);
     }
 	
 	findObjectInObject(objectName){
-      if (this.children[objectName]) {
+	  if(this.name == objectName)
+			return this;
+      if (this.getChild(objectName)) {
         return this.getChild(objectName);
       }
       var object = null;
@@ -73,8 +84,8 @@ define([
         if (object) {
           return;
         }
-		if(this.children[key])
-			object = this.children[key].findObjectInObject(objectName);
+		if(this.children[value])
+			object = this.children[value].findObjectInObject(objectName);
       });
       return object;
     }
@@ -84,10 +95,10 @@ define([
     // de l'objet.
     display(dT) {
       this.children.forEach((key, value) => {
-        this.children[key].display(dT);
+        this.children[value].display(dT);
       });
 	  this.components.forEach((key, value) => {
-        this.components[key].display(dT);
+        this.components[value].display(dT);
       });
     }
 
@@ -96,86 +107,120 @@ define([
     // de l'objet.
     update(dT) {
      this.children.forEach((key, value) => {
-        this.children[key].update(dT);
+        this.children[value].update(dT);
       });
 	  this.components.forEach((key, value) => {
-        this.components[key].update(dT);
+        this.components[value].update(dT);
       });
     }
   }
 
   class PlayerObject extends SceneObject{
-	  constructor(name,descr, owner){		  
+	  constructor(name, owner){		  
 		  super(name, owner);
+		  
 		  this.addComponent("Position");
+		  this.addComponent("Texture");		  
+		  this.addComponent("Joystick");
+		  this.addComponent("Collider");
+		  
+		  var score = new ScoreObject("score", this);
+		  this.addChild("score", score);
+	  }
+	  
+	  setup(descr){
 		  var pos = this.getComponent("Position");
 		  pos.setup(descr["components"]["Position"]);
-		  this.addComponent("Texture");
+		  
 		  var texture = this.getComponent("Texture");
-		  texture.setup(descr["components"]["Texture"]);		  
-		  this.addComponent("Joystick");
+		  texture.setup(descr["components"]["Texture"]);
+		  
 		  var joystick = this.getComponent("Joystick");
 		  joystick.setup(descr["components"]["Joystick"]);
-		  this.addComponent("Collider");
+		  
 		  var collider = this.getComponent("Collider");
-		  collider.setup(descr["components"]["Collider"]);
-		  var score = new ScoreObject("score", descr["children"]["score"], this);
-		  this.addChild("score", score);
+		  collider.setup(descr["components"]["Collider"]); 
+		  
+		  var score = this.getChild("score");
+		  score.setup(descr["children"]["score"]);
 	  }
   }
   
   class BackgroundObject extends SceneObject{
 	  constructor(name,descr, owner){
 		  super(name,owner);
+		  
 		  this.addComponent("Position");
+		  this.addComponent("Texture");			  
+	  }
+	  
+	  setup(descr){
 		  var pos = this.getComponent("Position");
 		  pos.setup(descr["components"]["Position"]);
-		  this.addComponent("Texture");
+		  
 		  var texture = this.getComponent("Texture");
-		  texture.setup(descr["components"]["Texture"]);			  
+		  texture.setup(descr["components"]["Texture"]);
 	  }
   }
   
   class RefereeObject extends SceneObject{
-	  constructor(name,descr, owner){
+	  constructor(name, owner){
 		super(name, owner);
+		
 		this.addComponent("Referee");
+	  }
+	  
+	  setup(descr){		
 		var referee = this.getComponent("Referee");
 		referee.setup(descr["components"]["Referee"]);
 	  }
   }
   
   class BallObject extends SceneObject{
-	  constructor(name,descr, owner){
+	  constructor(name, owner){
 		  super(name,owner);
-		  this.addComponent("Position");
+		  
+		  this.addComponent("Position");		  
+		  this.addComponent("Texture");
+		  this.addComponent("Motion");
+		  this.addComponent("Collider");	
+	  }
+	  
+	  setup(descr){
 		  var pos = this.getComponent("Position");
 		  pos.setup(descr["components"]["Position"]);
-		  this.addComponent("Texture");
+		  
 		  var texture = this.getComponent("Texture");
 		  texture.setup(descr["components"]["Texture"]);
-		  this.addComponent("Motion");
+		  
 		  var motion = this.getComponent("Motion");
-		  motion.setup(descr["components"]["Motion"]);
-		  this.addComponent("Collider");
+		  motion.setup(descr["components"]["Motion"]);	
+		  
 		  var collider = this.getComponent("Collider");
 		  collider.setup(descr["components"]["Collider"]);	  
 	  }
   }
   
   class ScoreObject extends SceneObject{
-	  constructor(name,descr, owner){
+	  constructor(name, owner){
 		  super(name,owner);
+		  
 		  this.addComponent("Position");
+		  this.addComponent("Texture");	  
+		  this.addComponent("TextureAtlas");		  
+		  this.addComponent("Score");
+	  }
+	  
+	  setup(descr){		  
 		  var pos = this.getComponent("Position");
 		  pos.setup(descr["components"]["Position"]);
-		  this.addComponent("Texture");
+		  
 		  var texture = this.getComponent("Texture");
-		  texture.setup(descr["components"]["Texture"]);		  
-		  this.addComponent("TextureAtlas");
+		  texture.setup(descr["components"]["Texture"]);
+		  
 		  var texture = this.getComponent("TextureAtlas");
-		  texture.setup(descr["components"]["TextureAtlas"]);		  
-		  this.addComponent("Score");
+		  texture.setup(descr["components"]["TextureAtlas"]);
+		  
 		  var texture = this.getComponent("Score");
 		  texture.setup(descr["components"]["Score"]);
 	  }
