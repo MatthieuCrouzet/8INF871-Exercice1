@@ -24,22 +24,32 @@ define([
     // Cette méthode appelle les méthodes *display* de tous les
     // objets de la scène.
     display(dT) {
-	  this.background.display(dT);
-	  this.ball.display(dT);
-	  this.player1.display(dT);
-	  this.player2.display(dT);
-	  this.referee.display(dT);
+		if(this.background)
+			this.background.display(dT);
+		if(this.ball)
+			this.ball.display(dT);
+		if(this.player1)
+			this.player1.display(dT);
+		if(this.player2)
+			this.player2.display(dT);
+		if(this.referee)
+			this.referee.display(dT);
     }
 
     // ## Méthode *update*
     // Cette méthode appelle les méthodes *update* de tous les
     // objets de la scène.
     update(dT) {
-	  this.background.update(dT);
-	  this.ball.update(dT);
-	  this.player1.update(dT);
-	  this.player2.update(dT);
-	  this.referee.update(dT);
+		if(this.background)
+			this.background.update(dT);		
+		if(this.ball)
+			this.ball.update(dT);		
+		if(this.player1)
+			this.player1.update(dT);		
+		if(this.player2)	
+			this.player2.update(dT);
+		if(this.referee)
+			this.referee.update(dT);
     }
 
     // ## Fonction *findObject*
@@ -47,12 +57,26 @@ define([
     // portant le nom spécifié.
     findObject(objectName) {
 		var promises = [];
-		const bg = this.background.findObjectInObject(objectName);
-		const ball = this.ball.findObjectInObject(objectName);
-		const p1 = this.player1.findObjectInObject(objectName);
-		const p2 = this.player2.findObjectInObject(objectName);
-		const ref = this.referee.findObjectInObject(objectName);
-		promises.push(bg, ball, p1, p2, ref);
+		if(this.background){
+			const bg = this.background.findObjectInObject(objectName);
+			promises.push(bg);
+		}
+		if(this.ball){
+			const ball = this.ball.findObjectInObject(objectName);
+			promises.push(ball);
+		}
+		if(this.player1){
+			const p1 = this.player1.findObjectInObject(objectName);
+			promises.push(p1);
+		}
+		if(this.player2){
+			const p2 = this.player2.findObjectInObject(objectName);
+			promises.push(p2);
+		}
+		if(this.referee){
+			const ref = this.referee.findObjectInObject(objectName);
+			promises.push(ref);
+		}
 		Promise.all(promises).then ((values) => {
 			for(var i = 0; i < values.length; i++){
 				if(values[i] != null){
@@ -66,9 +90,9 @@ define([
 	constructor(descr){	
 		this.name = "scene";
 		this.background = SceneObjectFactory.create("Background", "background", descr["background"], this);
-		this.ball = SceneObjectFactory.create("Ball", "ball", descr["ball"],this);
 		this.player1 = SceneObjectFactory.create("Player", "player1", descr["player1"], this);
-		this.player2 = SceneObjectFactory.create("Player", "player2", descr["player2"], this);
+		this.player2 = SceneObjectFactory.create("Player", "player2", descr["player2"], this);		
+		this.ball = SceneObjectFactory.create("Ball", "ball", descr["ball"],this);
 		this.referee = SceneObjectFactory.create("Referee", "referee", descr["referee"], this);
 	}
 	

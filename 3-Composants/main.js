@@ -25,10 +25,10 @@ define([
   function launchGame() {
     return Utils.loadJSON('scenes/scene.json')
       .then((sceneDescription) => {
-		  console.log(sceneDescription);
         return Scene.create(sceneDescription);
       })
       .then((scene) => {
+		  console.log(scene);
         const displayFn = scene.display.bind(scene);
         const updateFn = scene.update.bind(scene);
 
