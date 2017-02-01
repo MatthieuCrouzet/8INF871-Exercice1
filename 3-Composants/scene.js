@@ -88,6 +88,8 @@ define([
 		return null;
     }
 	
+	// ### Constructeur de la classe *Scene*
+    // Le constructeur de cette classe définit la scene.
 	constructor(){	
 		this.name = "scene";
 		this.background = SceneObjectFactory.create("Background", "background", this);
@@ -97,6 +99,8 @@ define([
 		this.referee = SceneObjectFactory.create("Referee", "referee", this);
 	}
 	
+	// ### Méthode *setup*
+    // La méthode *setup** met en place la scene
 	setup(descr){
 		this.background.setup(descr["background"]);
 		this.player1.setup(descr["player1"]);
@@ -104,8 +108,6 @@ define([
 		this.ball.setup(descr["ball"]);
 		this.referee.setup(descr["referee"]);
 	}
-	
-	
 	
   }
 

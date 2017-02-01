@@ -17,6 +17,9 @@ define([
 	  this.components.push(newComponent);
     }
 	
+	// ### Constructeur de la classe *SceneObject*
+    // Le constructeur de cette classe prend en paramètre le name du SceneObject et l'objet
+    // propriétaire du composant, et l'assigne au membre `owner`.
 	constructor(name, owner){
 		this.name = name;
 		this.owner = owner;
@@ -73,6 +76,9 @@ define([
 	  return current.findObject(objectName);
     }
 	
+	// ## Fonction *fingObjectInObject*
+    // Cette fonction retourne un objet fils d'un objet portant le
+    // nom spécifié.
 	findObjectInObject(objectName){
 	  if(this.name == objectName)
 			return this;
@@ -115,7 +121,13 @@ define([
     }
   }
 
+  // ## Classe *PlayerObject*
+  // Cette classe représente un joueur selon une position,
+  // une texture, un joystick et un collider
   class PlayerObject extends SceneObject{
+	// ### Constructeur de la classe *PlayerObject*
+    // Le constructeur de cette classe prend en paramètre le name du PlayerObject et l'objet
+    // propriétaire du composant, et l'assigne au membre `owner`.
 	  constructor(name, owner){		  
 		  super(name, owner);
 		  
@@ -128,6 +140,8 @@ define([
 		  this.addChild("score", score);
 	  }
 	  
+	// ### Méthode *setup*
+    // Initilise la position, la texture, le joystick, et le score du player.
 	  setup(descr){
 		  var pos = this.getComponent("Position");
 		  pos.setup(descr["components"]["Position"]);
@@ -146,7 +160,13 @@ define([
 	  }
   }
   
+  // ## Classe *BackgroundObject*
+  // Cette classe représente un background selon une position
+  // et une texture
   class BackgroundObject extends SceneObject{
+	// ### Constructeur de la classe *PlayerObject*
+    // Le constructeur de cette classe prend en paramètre le name du PlayerObject, l'object
+	// de description et l'objet propriétaire du composant, et l'assigne au membre `owner`.
 	  constructor(name,descr, owner){
 		  super(name,owner);
 		  
@@ -154,6 +174,8 @@ define([
 		  this.addComponent("Texture");			  
 	  }
 	  
+	// ### Méthode *setup*
+    // Initilise la position et la texture.
 	  setup(descr){
 		  var pos = this.getComponent("Position");
 		  pos.setup(descr["components"]["Position"]);
@@ -163,20 +185,33 @@ define([
 	  }
   }
   
+  // ## Classe *RefereeObject*
+  // Cette classe représente un arbitre selon un arbitre
   class RefereeObject extends SceneObject{
+	 // ### Constructeur de la classe *RefereeObject*
+    // Le constructeur de cette classe prend en paramètre le name du RefereeObject et l'objet
+    // propriétaire du composant, et l'assigne au membre `owner`.
 	  constructor(name, owner){
 		super(name, owner);
 		
 		this.addComponent("Referee");
 	  }
 	  
+	 // ### Méthode *setup*
+    // Initilise l'arbitre.
 	  setup(descr){		
 		var referee = this.getComponent("Referee");
 		referee.setup(descr["components"]["Referee"]);
 	  }
   }
   
+  // ## Classe *BallObject*
+  // Cette classe représente une ball selon une position,
+  // une texture, une motion et un collider
   class BallObject extends SceneObject{
+	// ### Constructeur de la classe *BallObject*
+    // Le constructeur de cette classe prend en paramètre le name du BallObject et l'objet
+    // propriétaire du composant, et l'assigne au membre `owner`.
 	  constructor(name, owner){
 		  super(name,owner);
 		  
@@ -186,6 +221,8 @@ define([
 		  this.addComponent("Collider");	
 	  }
 	  
+	// ### Méthode *setup*
+    // Initilise la position, la texture, la motion, et le collider de la ball.
 	  setup(descr){
 		  var pos = this.getComponent("Position");
 		  pos.setup(descr["components"]["Position"]);
@@ -201,7 +238,13 @@ define([
 	  }
   }
   
+  // ## Classe *ScoreObject*
+  // Cette classe représente un score selon une position,
+  // une texture, une textureAtlas et un score
   class ScoreObject extends SceneObject{
+	// ### Constructeur de la classe *ScoreObject*
+    // Le constructeur de cette classe prend en paramètre le name du ScoreObject et l'objet
+    // propriétaire du composant, et l'assigne au membre `owner`.
 	  constructor(name, owner){
 		  super(name,owner);
 		  
@@ -211,6 +254,8 @@ define([
 		  this.addComponent("Score");
 	  }
 	  
+	// ### Méthode *setup*
+    // Initilise la position, la texture, la textureAtlas, et le score du score.
 	  setup(descr){		  
 		  var pos = this.getComponent("Position");
 		  pos.setup(descr["components"]["Position"]);
@@ -226,14 +271,23 @@ define([
 	  }
   }
   
+  // # Classe *SceneObjectFactory*
+  // Cette classe est le point d'entrée pour créer les composants.
   class SceneObjectFactory {
+	 // ## Fonction statique *create*
+    // Cette fonction instancie un nouveau composant choisi dans
+    // le tableau `sceneObjectCreators` depuis son nom.
     static create(type, name, descr, owner) {
       const comp = new SceneObjectFactory.sceneObjectCreators[type](name, descr,owner);
       comp.__type = type;
       return comp;
     }
   }
-  
+
+  // ## Attribut statique *sceneObjectCreators*
+  // Ce tableau associatif fait le lien entre les noms des composants
+  // tels qu'utilisés dans le fichier JSON et les classes de
+  // composants correspondants.
   SceneObjectFactory.sceneObjectCreators = {
     Background: BackgroundObject,
 	Ball: BallObject,
