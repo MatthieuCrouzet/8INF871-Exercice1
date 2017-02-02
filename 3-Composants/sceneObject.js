@@ -9,12 +9,30 @@ define([
   // La classe *SceneObject* représente un objet de la scène qui
   // peut contenir des enfants et des composants.
   class SceneObject {
+	  
+	static create(type, name, descr, owner) {
+		let sceneObjectCreators = {
+			Background: BackgroundObject,
+			Ball: BallObject,
+			Player: PlayerObject,
+			Referee: RefereeObject,
+			Score: ScoreObject
+		};  
+      const obj = new sceneObjectCreators[type](name, descr,owner);
+      obj.__type = type;
+      return obj;
+    }
+	  
+
+	  
+	  
     // ## Méthode *addComponent*
     // Cette méthode prend en paramètre le type d'un composant et
     // instancie un nouveau composant.
     addComponent(type) {
       const newComponent = ComponentFactory.create(type, this);
 	  this.components.push(newComponent);
+	  return newComponent;
     }
 	
 	// ### Constructeur de la classe *SceneObject*
@@ -31,21 +49,26 @@ define([
     // Cette fonction retourne un composant existant du type spécifié
     // associé à l'objet.
     getComponent(type) {
-	  for(var i = 0; i < this.components.length; i++) {
-		  var comp = this.components[i];
-		  if(comp.__type == type){
-			  return comp;
+	  var comp = null;
+	  this.components.forEach((key,value) => {
+		  if(comp){
+			  return;
 		  }
-	  }
-	  return null;
+		  if(this.components[value].__type == type){
+			  comp = this.components[value];
+		  }
+	  });
+	  console.log(comp);
+	  return comp;
     }
 
     // ## Méthode *addChild*
     // La méthode *addChild* ajoute à l'objet courant un objet
     // enfant.
     addChild(objectName, child) {
-		child.name = objectName;
+	  child.name = objectName;
       this.children.push(child);
+	  return child;
     }
 
     // ## Fonction *getChild*
@@ -106,6 +129,7 @@ define([
 	  this.components.forEach((key, value) => {
         this.components[value].display(dT);
       });
+	  return this;
     }
 
     // ## Méthode *update*
@@ -118,6 +142,7 @@ define([
 	  this.components.forEach((key, value) => {
         this.components[value].update(dT);
       });
+	 return this;
     }
   }
 
@@ -270,31 +295,7 @@ define([
 		  texture.setup(descr["components"]["Score"]);
 	  }
   }
-  
-  // # Classe *SceneObjectFactory*
-  // Cette classe est le point d'entrée pour créer les composants.
-  class SceneObjectFactory {
-	 // ## Fonction statique *create*
-    // Cette fonction instancie un nouveau composant choisi dans
-    // le tableau `sceneObjectCreators` depuis son nom.
-    static create(type, name, descr, owner) {
-      const comp = new SceneObjectFactory.sceneObjectCreators[type](name, descr,owner);
-      comp.__type = type;
-      return comp;
-    }
-  }
 
-  // ## Attribut statique *sceneObjectCreators*
-  // Ce tableau associatif fait le lien entre les noms des composants
-  // tels qu'utilisés dans le fichier JSON et les classes de
-  // composants correspondants.
-  SceneObjectFactory.sceneObjectCreators = {
-    Background: BackgroundObject,
-	Ball: BallObject,
-	Player: PlayerObject,
-	Referee: RefereeObject,
-	Score: ScoreObject
-  };
 
-  return SceneObjectFactory;
+  return SceneObject;
 });

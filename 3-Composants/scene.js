@@ -1,7 +1,7 @@
 define([
   'sceneObject',
 ], (
-  SceneObjectFactory
+  SceneObject
 ) => {
   'use strict';
 
@@ -17,10 +17,11 @@ define([
     // retourne une promesse résolue lorsque l'ensemble de la
     // hiérarchie est configurée correctement.
     static create(description) {
-      const scene = new Scene();
-	  scene.setup(description);
-	  console.log(scene);
-	  return scene;
+	  return new Promise((resolve, reject) => {			  
+		  const scene = new Scene();
+		  scene.setup(description);
+		  resolve(scene)
+	  });
     }
 
     // ## Méthode *display*
@@ -92,11 +93,11 @@ define([
     // Le constructeur de cette classe définit la scene.
 	constructor(){	
 		this.name = "scene";
-		this.background = SceneObjectFactory.create("Background", "background", this);
-		this.player1 = SceneObjectFactory.create("Player", "player1", this);
-		this.player2 = SceneObjectFactory.create("Player", "player2", this);		
-		this.ball = SceneObjectFactory.create("Ball", "ball",this);
-		this.referee = SceneObjectFactory.create("Referee", "referee", this);
+		this.background = SceneObject.create("Background", "background", this);
+		this.player1 = SceneObject.create("Player", "player1", this);
+		this.player2 = SceneObject.create("Player", "player2", this);		
+		this.ball = SceneObject.create("Ball", "ball",this);
+		this.referee = SceneObject.create("Referee", "referee", this);
 	}
 	
 	// ### Méthode *setup*
