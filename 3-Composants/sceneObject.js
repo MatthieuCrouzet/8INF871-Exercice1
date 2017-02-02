@@ -19,7 +19,7 @@ define([
 			Score: ScoreObject
 		};  
       const obj = new sceneObjectCreators[type](name, descr,owner);
-      obj.__type = type;
+      obj.type = type;
       return obj;
     }
 	  
@@ -54,11 +54,10 @@ define([
 		  if(comp){
 			  return;
 		  }
-		  if(this.components[value].__type == type){
-			  comp = this.components[value];
+		  if(key.type == type){
+			  comp = key;
 		  }
 	  });
-	  console.log(comp);
 	  return comp;
     }
 
@@ -76,12 +75,12 @@ define([
     // nom spécifié, dont l'objet courant est le parent.
     getChild(objectName) {      
 	  var child = null;
-      this.children.forEach((key, value) => {
+      this.children.forEach((key) => {
         if (child) {
           return;
         }
-		if(this.children[value].name == objectName)
-			child = this.children[value];
+		if(key.name == objectName)
+			child = key;
       });
       return child;
     }
@@ -109,12 +108,12 @@ define([
         return this.getChild(objectName);
       }
       var object = null;
-      this.children.forEach((key, value) => {
+      this.children.forEach((key) => {
         if (object) {
           return;
         }
-		if(this.children[value])
-			object = this.children[value].findObjectInObject(objectName);
+		if(key)
+			object = key.findObjectInObject(objectName);
       });
       return object;
     }
@@ -123,11 +122,11 @@ define([
     // Cette méthode appelle la méthode *display* des composants
     // de l'objet.
     display(dT) {
-      this.children.forEach((key, value) => {
-        this.children[value].display(dT);
+      this.children.forEach((key) => {
+        key.display(dT);
       });
-	  this.components.forEach((key, value) => {
-        this.components[value].display(dT);
+	  this.components.forEach((key) => {
+        key.display(dT);
       });
 	  return this;
     }
@@ -136,11 +135,11 @@ define([
     // Cette méthode appelle la méthode *update* des composants
     // de l'objet.
     update(dT) {
-     this.children.forEach((key, value) => {
-        this.children[value].update(dT);
+     this.children.forEach((key) => {
+        key.update(dT);
       });
-	  this.components.forEach((key, value) => {
-        this.components[value].update(dT);
+	  this.components.forEach((key) => {
+        key.update(dT);
       });
 	 return this;
     }

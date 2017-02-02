@@ -17,43 +17,35 @@ define([
     // retourne une promesse résolue lorsque l'ensemble de la
     // hiérarchie est configurée correctement.
     static create(description) {
-	  return new Promise((resolve, reject) => {			  
-		  const scene = new Scene();
-		  scene.setup(description);
-		  resolve(scene)
-	  });
+		var promise = new Promise(
+			function(resolve, reject) {  				
+			  const scene = new Scene();
+			  if(Object.keys(description).length > 0){
+				scene.setup(description);
+			  }
+			  resolve(scene);
+			});
+		  return promise;
     }
 
     // ## Méthode *display*
     // Cette méthode appelle les méthodes *display* de tous les
     // objets de la scène.
     display(dT) {
-		if(this.background)
-			this.background.display(dT);
-		if(this.ball)
-			this.ball.display(dT);
-		if(this.player1)
-			this.player1.display(dT);
-		if(this.player2)
-			this.player2.display(dT);
-		if(this.referee)
-			this.referee.display(dT);
+		this.children.forEach(function(key){
+			if(key instanceof SceneObject)
+				key.display(dT);
+		});
     }
 
     // ## Méthode *update*
     // Cette méthode appelle les méthodes *update* de tous les
     // objets de la scène.
     update(dT) {
-		if(this.background)
-			this.background.update(dT);		
-		if(this.ball)
-			this.ball.update(dT);		
-		if(this.player1)
-			this.player1.update(dT);		
-		if(this.player2)	
-			this.player2.update(dT);
-		if(this.referee)
-			this.referee.update(dT);
+		this.children.forEach(function(key){
+			if(key instanceof SceneObject)
+				key.update(dT);
+		});
     }
 
     // ## Fonction *findObject*
@@ -61,26 +53,10 @@ define([
     // portant le nom spécifié.
     findObject(objectName) {
 		var values = [];
-		if(this.background){
-			const bg = this.background.findObjectInObject(objectName);
-			values.push(bg);
-		}
-		if(this.player1){
-			const p1 = this.player1.findObjectInObject(objectName);
-			values.push(p1);
-		}
-		if(this.player2){
-			const p2 = this.player2.findObjectInObject(objectName);
-			values.push(p2);
-		}
-		if(this.ball){
-			const ball = this.ball.findObjectInObject(objectName);
-			values.push(ball);
-		}
-		if(this.referee){
-			const ref = this.referee.findObjectInObject(objectName);
-			values.push(ref);
-		}
+		this.children.forEach(function(key){
+			if(key instanceof SceneObject)
+				values.push(key.findObjectInObject(objectName));
+		});
 		for(var i = 0; i < values.length; i++){
 			if(values[i] != null){
 				return values[i];
@@ -93,21 +69,23 @@ define([
     // Le constructeur de cette classe définit la scene.
 	constructor(){	
 		this.name = "scene";
-		this.background = SceneObject.create("Background", "background", this);
-		this.player1 = SceneObject.create("Player", "player1", this);
-		this.player2 = SceneObject.create("Player", "player2", this);		
-		this.ball = SceneObject.create("Ball", "ball",this);
-		this.referee = SceneObject.create("Referee", "referee", this);
+		this.children = [];
+		var background = SceneObject.create("Background", "background", this);
+		var player1 = SceneObject.create("Player", "player1", this);
+		var player2 = SceneObject.create("Player", "player2", this);		
+		var ball = SceneObject.create("Ball", "ball",this);
+		var referee = SceneObject.create("Referee", "referee", this);
+		this.children.push(background,player1, player2, ball, referee);
 	}
 	
 	// ### Méthode *setup*
     // La méthode *setup** met en place la scene
 	setup(descr){
-		this.background.setup(descr["background"]);
-		this.player1.setup(descr["player1"]);
-		this.player2.setup(descr["player2"]);
-		this.ball.setup(descr["ball"]);
-		this.referee.setup(descr["referee"]);
+		this.children[0].setup(descr["background"]);
+		this.children[1].setup(descr["player1"]);
+		this.children[2].setup(descr["player2"]);
+		this.children[3].setup(descr["ball"]);
+		this.children[4].setup(descr["referee"]);
 	}
 	
   }

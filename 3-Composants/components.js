@@ -422,7 +422,7 @@ define(() => {
     // le tableau `componentCreators` depuis son nom.
     static create(type, owner) {
       const comp = new ComponentFactory.componentCreators[type](owner);
-      comp.__type = type;
+      comp.type = type;
       return comp;
     }
   }
